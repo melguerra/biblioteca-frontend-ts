@@ -32,51 +32,86 @@ function Dashboard() {
   };
 
   const guardarLibro = async () => {
-    if (titulo.trim() === "" || autor.trim() === "") {
-Swal.fire({
-  icon: "warning",
-  title: "Campos incompletos",
-  text: "Complete todos los campos.",
-});      return;
+    alert("Entró a guardarLibro");
+
+    // Verifica que los campos no estén vacíos
+  if (titulo.trim() === "" || autor.trim() === "") {
+    Swal.fire({
+      icon: "warning",
+      title: "Campos incompletos",
+      text: "Complete todos los campos.",
+    });
+    return;
     }
 
     try {
       const token = localStorage.getItem("token");
 
-      const url = idEditar
-        ? `https://biblioteca-backend-psi.vercel.app/api/libros/${idEditar}`
-        : "https://biblioteca-backend-psi.vercel.app/api/libros";
+  // Si idEditar tiene valor, significa que estamos editando.
+  // Si es null, significa que estamos agregando un libro nuevo.
+    const url = idEditar
+      ? `https://biblioteca-backend-psi.vercel.app/api/libros/${idEditar}`
+      : "https://biblioteca-backend-psi.vercel.app/api/libros";
 
       const metodo = idEditar ? "PUT" : "POST";
 
       const respuesta = await fetch(url, {
-        method: metodo,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          titulo,
-          autor,
-        }),
+      method: metodo,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        titulo,
+        autor,
+      }),
+    });
+
+    if (!respuesta.ok) {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "No se pudo guardar el libro.",
       });
+      return;
+    }
 
-      if (!respuesta.ok) {
-        Swal.fire({
-  icon: "error",
-  title: "Error",
-  text: "No se pudo guardar el libro.",
-});
-        return;
-      }
+     // Si el libro se guardó correctamente,
+    // mostramos un mensaje distinto según la acción realizada.
+    
+     if (idEditar) {
+      await Swal.fire({
+        icon: "success",
+        title: "Libro actualizado",
+        text: "Los datos del libro se actualizaron correctamente.",
+        timer: 1800,
+        showConfirmButton: false,
+      });
+    } else {
+      await Swal.fire({
+        icon: "success",
+        title: "Libro agregado",
+        text: "El libro se agregó correctamente.",
+        timer: 1800,
+        showConfirmButton: false,
+      });
+    }
 
+     // Limpiamos el formulario para volver a dejarlo vacío.
       setTitulo("");
       setAutor("");
       setIdEditar(null);
 
+    // Volvemos a consultar los libros para actualizar la tabla.
       obtenerLibros();
     } catch (error) {
       console.error(error);
+
+      Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: "Ocurrió un error inesperado.",
+    });
     }
   };
 
