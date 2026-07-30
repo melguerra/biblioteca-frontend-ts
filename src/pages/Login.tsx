@@ -1,11 +1,12 @@
-import { useState, FormEvent } from "react";
+import { useState } from "react";
+import type { FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { iniciarSesion } from "../store/slices/usuarioSlice";
 import Swal from "sweetalert2";
 
-import { auth } from "../firebase/auth";
-import { signInWithEmailAndPassword } from "firebase/auth";
+//import { auth } from "../firebase/auth";
+//import { signInWithEmailAndPassword } from "firebase/auth";
 
 
 interface Usuario {
@@ -72,7 +73,7 @@ Swal.fire({
         })
       );
 
-      Swal.fire({
+    await  Swal.fire({
   icon: "success",
   title: "Bienvenido",
   text: datos.mensaje,
