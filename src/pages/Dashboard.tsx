@@ -32,7 +32,6 @@ function Dashboard() {
   };
 
   const guardarLibro = async () => {
-    alert("Entró a guardarLibro");
 
     // Verifica que los campos no estén vacíos
   if (titulo.trim() === "" || autor.trim() === "") {
