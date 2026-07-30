@@ -4,6 +4,9 @@ import { useDispatch } from "react-redux";
 import { iniciarSesion } from "../store/slices/usuarioSlice";
 import Swal from "sweetalert2";
 
+import { auth } from "../firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
+
 
 interface Usuario {
   nombre: string;
