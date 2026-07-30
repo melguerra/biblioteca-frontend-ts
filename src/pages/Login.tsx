@@ -2,6 +2,8 @@ import { useState, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { iniciarSesion } from "../store/slices/usuarioSlice";
+import Swal from "sweetalert2";
+
 
 interface Usuario {
   nombre: string;
@@ -25,8 +27,11 @@ function Login() {
     e.preventDefault();
 
     if (email.trim() === "" || password.trim() === "") {
-      alert("Complete todos los campos.");
-      return;
+Swal.fire({
+  icon: "warning",
+  title: "Campos incompletos",
+  text: "Complete todos los campos.",
+});      return;
     }
 
     try {
@@ -47,8 +52,11 @@ function Login() {
       const datos: LoginResponse = await respuesta.json();
 
       if (!respuesta.ok) {
-        alert(datos.mensaje);
-        return;
+Swal.fire({
+  icon: "error",
+  title: "Error",
+  text: datos.mensaje,
+});        return;
       }
 
       localStorage.setItem("token", datos.token);
@@ -61,12 +69,22 @@ function Login() {
         })
       );
 
-      alert(datos.mensaje);
+      Swal.fire({
+  icon: "success",
+  title: "Bienvenido",
+  text: datos.mensaje,
+  timer: 1500,
+  showConfirmButton: false,
+});
 
       navigate("/dashboard");
     } catch (error) {
       console.error(error);
-      alert("Error al conectar con el servidor.");
+      Swal.fire({
+  icon: "error",
+  title: "Error",
+  text: "No se pudo conectar con el servidor.",
+});
     }
   };
 

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 
 interface Libro {
   _id: string;
@@ -32,8 +33,11 @@ function Dashboard() {
 
   const guardarLibro = async () => {
     if (titulo.trim() === "" || autor.trim() === "") {
-      alert("Complete todos los campos.");
-      return;
+Swal.fire({
+  icon: "warning",
+  title: "Campos incompletos",
+  text: "Complete todos los campos.",
+});      return;
     }
 
     try {
@@ -58,7 +62,11 @@ function Dashboard() {
       });
 
       if (!respuesta.ok) {
-        alert("Error al guardar el libro.");
+        Swal.fire({
+  icon: "error",
+  title: "Error",
+  text: "No se pudo guardar el libro.",
+});
         return;
       }
 
@@ -73,31 +81,52 @@ function Dashboard() {
   };
 
   const eliminarLibro = async (id: string) => {
-    const confirmar = window.confirm(
-      "¿Está seguro que desea eliminar este libro?"
+    const resultado = await Swal.fire({
+    title: "¿Está seguro?",
+    text: "Esta acción eliminará el libro definitivamente.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#3085d6",
+    confirmButtonText: "Sí, eliminar",
+    cancelButtonText: "Cancelar",
+  });
+
+  if (!resultado.isConfirmed) {
+    return;
+  }
+
+  try {
+    const token = localStorage.getItem("token");
+
+    const respuesta = await fetch(
+      `https://biblioteca-backend-psi.vercel.app/api/libros/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
 
-    if (!confirmar) return;
-
-    try {
-      const token = localStorage.getItem("token");
-
-      const respuesta = await fetch(
-        `https://biblioteca-backend-psi.vercel.app/api/libros/${id}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (!respuesta.ok) {
-        alert("Error al eliminar el libro.");
-        return;
-      }
+    if (!respuesta.ok) {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "No se pudo eliminar el libro.",
+      });
+      return;
+    }
 
       obtenerLibros();
+
+Swal.fire({
+  icon: "success",
+  title: "Libro eliminado",
+  text: "El libro fue eliminado correctamente.",
+  timer: 1800,
+  showConfirmButton: false,
+});
     } catch (error) {
       console.error(error);
     }

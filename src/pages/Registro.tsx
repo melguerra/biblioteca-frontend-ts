@@ -1,5 +1,6 @@
 import { useState, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 interface RegistroResponse {
   mensaje: string;
@@ -20,8 +21,11 @@ function Registro() {
       email.trim() === "" ||
       password.trim() === ""
     ) {
-      alert("Complete todos los campos.");
-      return;
+Swal.fire({
+  icon: "warning",
+  title: "Campos incompletos",
+  text: "Complete todos los campos.",
+});      return;
     }
 
     try {
@@ -43,17 +47,28 @@ function Registro() {
       const datos: RegistroResponse = await respuesta.json();
 
       if (!respuesta.ok) {
-        alert(datos.mensaje);
-        return;
+Swal.fire({
+  icon: "error",
+  title: "Error",
+  text: datos.mensaje,
+});        return;
       }
 
-      alert("Usuario registrado correctamente");
-
+Swal.fire({
+  icon: "success",
+  title: "¡Registro exitoso!",
+  text: "Usuario registrado correctamente.",
+  timer: 1800,
+  showConfirmButton: false,
+});
       navigate("/login");
     } catch (error) {
       console.error(error);
-      alert("Error al registrar usuario");
-    }
+Swal.fire({
+  icon: "error",
+  title: "Error",
+  text: "No se pudo registrar el usuario.",
+});    }
   };
 
   return (
