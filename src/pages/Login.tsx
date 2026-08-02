@@ -5,8 +5,8 @@ import { useDispatch } from "react-redux";
 import { iniciarSesion } from "../store/slices/usuarioSlice";
 import Swal from "sweetalert2";
 
-//import { auth } from "../firebase/auth";
-//import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 
 interface Usuario {
@@ -27,7 +27,7 @@ function Login() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  //Funcion que se ejecuta cuando el usuario envía el formulario.
+  //Funcion que se ejecuta al enviar el formulario.
   const manejarLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();  //Evita que el formulario recargue la pagina. 
 
@@ -42,14 +42,23 @@ Swal.fire({
     }
 
     try {
+
+  // Primero autenticamos al usuario con Firebase
+  const credencial = await signInWithEmailAndPassword(
+    auth,
+    email,
+    password
+  );
+
+   // Luego solicita el JWT al backend.
       const respuesta = await fetch(
         "https://biblioteca-backend-psi.vercel.app/api/usuarios/login",
         {
-          method: "POST",  //POST porque enviamos info al servidor. 
-          headers: {       //El backend espera los datos en formato JSON. 
+          method: "POST",
+          headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ 
+          body: JSON.stringify({
             email,
             password,
           }),
@@ -59,41 +68,42 @@ Swal.fire({
       //Esperamos rta del servidor y la convertimos a JSON.
       const datos: LoginResponse = await respuesta.json();
 
-      if (!respuesta.ok) {  //si falla la rta mosntramos un mensaje de error.
-Swal.fire({
-  icon: "error",
-  title: "Error",
-  text: datos.mensaje,
-});        return;
+       if (!respuesta.ok) {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: datos.mensaje,
+        });
+        return;
       }
 
-      //Guardamos el token para mantener la sesion iniciada. 
+      // Guarda la sesión.
       localStorage.setItem("token", datos.token);
       localStorage.setItem("usuario", JSON.stringify(datos.usuario));
 
-      dispatch(  //guarda el usuario autenticado en Redux.
+      //guarda el usuario en Redux.
+      dispatch(  
         iniciarSesion({
           usuario: datos.usuario,
           token: datos.token,
         })
       );
 
-    await  Swal.fire({
-  icon: "success",
-  title: "Bienvenido",
-  text: datos.mensaje,
-  timer: 1500,
-  showConfirmButton: false,
-});
+    await Swal.fire({
+        icon: "success",
+        title: "Bienvenido",
+        text: datos.mensaje,
+        timer: 1500,
+        showConfirmButton: false,
+      });
 
       navigate("/dashboard");
-    } catch (error) {
-      console.error(error);
+    } catch {
       Swal.fire({
-  icon: "error",
-  title: "Error",
-  text: "No se pudo conectar con el servidor.",
-});
+        icon: "error",
+        title: "Error",
+        text: "Email o contraseña incorrectos.",
+      });
     }
   };
 
