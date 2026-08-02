@@ -8,18 +8,21 @@ interface Libro {
 }
 
 function Dashboard() {
-  const [libros, setLibros] = useState<Libro[]>([]);
+
+  //aca guarda el listado de libros que trae del backend.
+  const [libros, setLibros] = useState<Libro[]>([]);  
+
   const [titulo, setTitulo] = useState("");
   const [autor, setAutor] = useState("");
   const [idEditar, setIdEditar] = useState<string | null>(null);
 
-  useEffect(() => {
+  useEffect(() => { //obtiene los libros del backend al abrir la pag.principal
     obtenerLibros();
   }, []);
 
-  const obtenerLibros = async () => {
+  const obtenerLibros = async () => { 
     try {
-      const respuesta = await fetch(
+      const respuesta = await fetch( //Hace el GET
         "https://biblioteca-backend-psi.vercel.app/api/libros"
       );
 
@@ -44,7 +47,7 @@ function Dashboard() {
     }
 
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("token"); 
 
   // Si idEditar tiene valor, significa que estamos editando.
   // Si es null, significa que estamos agregando un libro nuevo.
@@ -58,7 +61,7 @@ function Dashboard() {
       method: metodo,
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token}`, 
       },
       body: JSON.stringify({
         titulo,
@@ -78,7 +81,7 @@ function Dashboard() {
      // Si el libro se guardó correctamente,
     // mostramos un mensaje distinto según la acción realizada.
     
-     if (idEditar) {
+     if (idEditar) { 
       await Swal.fire({
         icon: "success",
         title: "Libro actualizado",
@@ -114,7 +117,9 @@ function Dashboard() {
     }
   };
 
+  //aca se elimina un libro mediante DELTE
   const eliminarLibro = async (id: string) => {
+    
     const resultado = await Swal.fire({
     title: "¿Está seguro?",
     text: "Esta acción eliminará el libro definitivamente.",

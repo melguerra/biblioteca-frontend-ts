@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import usuarioReducer from "./slices/usuarioSlice";
 
+// Configuración del Store de Redux, aca se almacena el estado global. 
 export const store = configureStore({
   reducer: {
     usuario: usuarioReducer,

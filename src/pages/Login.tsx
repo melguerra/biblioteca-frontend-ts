@@ -27,9 +27,12 @@ function Login() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  //Funcion que se ejecuta cuando el usuario envía el formulario.
   const manejarLogin = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+    e.preventDefault();  //Evita que el formulario recargue la pagina. 
 
+
+  //Aca se verifica que el usuario haya completado ambos campos 
     if (email.trim() === "" || password.trim() === "") {
 Swal.fire({
   icon: "warning",
@@ -42,20 +45,21 @@ Swal.fire({
       const respuesta = await fetch(
         "https://biblioteca-backend-psi.vercel.app/api/usuarios/login",
         {
-          method: "POST",
-          headers: {
+          method: "POST",  //POST porque enviamos info al servidor. 
+          headers: {       //El backend espera los datos en formato JSON. 
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
+          body: JSON.stringify({ 
             email,
             password,
           }),
         }
       );
 
+      //Esperamos rta del servidor y la convertimos a JSON.
       const datos: LoginResponse = await respuesta.json();
 
-      if (!respuesta.ok) {
+      if (!respuesta.ok) {  //si falla la rta mosntramos un mensaje de error.
 Swal.fire({
   icon: "error",
   title: "Error",
@@ -63,10 +67,11 @@ Swal.fire({
 });        return;
       }
 
+      //Guardamos el token para mantener la sesion iniciada. 
       localStorage.setItem("token", datos.token);
       localStorage.setItem("usuario", JSON.stringify(datos.usuario));
 
-      dispatch(
+      dispatch(  //guarda el usuario autenticado en Redux.
         iniciarSesion({
           usuario: datos.usuario,
           token: datos.token,

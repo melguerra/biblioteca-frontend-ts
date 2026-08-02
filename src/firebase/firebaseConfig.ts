@@ -1,13 +1,16 @@
 import { initializeApp } from "firebase/app";
 
+// Configuración de Firebase obtenida desde variables de entorno (.env)
+// De esta forma las claves no quedan escritas directamente en el código.
+
 const firebaseConfig = {
-  apiKey: "AIzaSyDxdjT_M3E73eiXuNZI48Z38ThNAjh8gmc",
-  authDomain: "biblioteca-mdw.firebaseapp.com",
-  projectId: "biblioteca-mdw",
-  storageBucket: "biblioteca-mdw.firebasestorage.app",
-  messagingSenderId: "347245355230",
-  appId: "1:347245355230:web:833574f79d4ad20c22224f",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
-// Inicializa Firebase con la configuración del proyecto
+// Inicializa Firebase utilizando la configuración anterior.
 export const app = initializeApp(firebaseConfig);

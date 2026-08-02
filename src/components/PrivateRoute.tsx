@@ -6,13 +6,13 @@ interface PrivateRouteProps {
 }
 
 function PrivateRoute({ children }: PrivateRouteProps) {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("token"); //verifica si existe JWT.
 
-  if (!token) {
+  if (!token) {  //Si no existe token, redirige al login.
     return <Navigate to="/login" replace />;
   }
 
-  return <>{children}</>;
+  return <>{children}</>;//devuelve componente protegido, que seria el dashboard.
 }
 
 export default PrivateRoute;
