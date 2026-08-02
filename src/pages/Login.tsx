@@ -44,11 +44,11 @@ Swal.fire({
     try {
 
   // Primero autenticamos al usuario con Firebase
-  const credencial = await signInWithEmailAndPassword(
-    auth,
-    email,
-    password
-  );
+await signInWithEmailAndPassword(
+  auth,
+  email,
+  password
+);
 
    // Luego solicita el JWT al backend.
       const respuesta = await fetch(
