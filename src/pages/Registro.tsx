@@ -2,6 +2,9 @@ import { useState } from "react";
 import type { FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import { auth } from "../firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+
 
 interface RegistroResponse {
   mensaje: string;
@@ -30,6 +33,8 @@ Swal.fire({
     }
 
     try {
+      await createUserWithEmailAndPassword(auth, email, password);
+      
       const respuesta = await fetch(
         "https://biblioteca-backend-psi.vercel.app/api/usuarios/registro",
         {
@@ -63,13 +68,21 @@ Swal.fire({
   showConfirmButton: false,
 });
       navigate("/login");
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+     console.error(error);
+
+let mensaje = "No se pudo registrar el usuario.";
+
+if (error.code === "auth/email-already-in-use") {
+  mensaje = "Ese correo ya está registrado.";
+}
+
 Swal.fire({
   icon: "error",
   title: "Error",
-  text: "No se pudo registrar el usuario.",
-});    }
+  text: mensaje,
+});
+   }
   };
 
   return (
